@@ -1,0 +1,22 @@
+@mixin table-th ($font-size){
+  th{
+    font-size: $font-size;
+    position: absolute;
+    &:nth-child(2){
+      left: 10px;
+    }
+    &:nth-child(2){
+      left: 71px;
+    }
+
+    &:nth-child(3){
+      left: 440px;
+    }
+    &:nth-child(4){
+      left: 610px;
+    }
+    &:nth-child(5){
+      left: 726px;
+    }
+  }
+}

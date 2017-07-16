@@ -1,0 +1,12 @@
+@mixin my-button ($btn-font-size){
+    button{
+      font-size:  $btn-font-size - 1 + px;
+      width: 80px;
+      border: 1px solid #777;
+      border-radius: 2px;
+      background-color: #fff;
+      padding-top: 3px;
+      padding-bottom: 3px;
+    }
+}
+

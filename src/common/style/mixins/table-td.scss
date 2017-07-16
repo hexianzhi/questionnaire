@@ -1,0 +1,28 @@
+@import "my-button.scss";
+
+@mixin table-td ($font-size){
+  td{
+    font-size: $font-size + px;
+    display: inline-block;
+
+    &:nth-child(1){
+      margin-left: 20px;
+
+    }
+    &:nth-child(2){
+      margin-left: 25px;
+    }
+
+    &:nth-child(3){
+      margin-left: 280px;
+    }
+    &:nth-child(4){
+      margin-left: 110px;
+    }
+    &:nth-child(5){
+      margin-left: 100px;
+    }
+
+    @include my-button($btn-font-size: $font-size);
+  }
+}
