@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <header>
-      <router-link to="/">
         <img src="./assets/question_mark.png"/>
         <h3>
           问卷管理
@@ -9,7 +8,6 @@
         <h5>
           我的问卷
         </h5>
-      </router-link>
     </header>
     <router-view></router-view>
   </div>
