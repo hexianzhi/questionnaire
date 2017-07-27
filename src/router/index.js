@@ -12,12 +12,12 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/check'
+      redirect: '/newbuild'
     },
-    {
-      path: '/check',
-      component: check
-    },
+    // {
+    //   path: '/check',
+    //   component: check
+    // },
     {
       path: '/edit',
       component: edit

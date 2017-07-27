@@ -2,7 +2,7 @@
 
     <div id="container">
         <div class="qn-head">
-          <p contentEditable="true">
+          <p contentEditable="true"  v-on:keyup="titleChange" >
             {{qnMessage.title}}
           </p>
         </div>
@@ -12,7 +12,8 @@
             <!--以后这里的组件是由函数拼凑出来的-->
             <!--还要传是不是最后一个-->
             <li v-for="(choice, index ) in topics">
-              <single-choice   v-show="(choice.type === 'radio')" :key="choice.title"
+              <single-choice   v-if="(choice.type === 'radio')"
+                               :key="choice.id"
                                v-bind:choice = "choice"
                                v-bind:serialNum = "index"
 
@@ -22,7 +23,7 @@
                                v-bind:canUp="notFirstSerialNum(index)"
                                v-bind:canDown="notLastSerialNum(index,topics.length)">
               </single-choice>
-              <multiple-choice v-show="(choice.type === 'checkbox')"
+              <multiple-choice v-if="(choice.type === 'checkbox')" :key="choice.id"
                                v-bind:choice = "choice"
                                v-bind:serialNum = "index"
 
@@ -33,7 +34,7 @@
                                v-bind:canDown="notLastSerialNum(index,topics.length)">
               </multiple-choice>
 
-              <textareaCopment v-show="(choice.type === 'textarea')"
+              <textareaCopment v-if="(choice.type === 'textarea')"  :key="choice.id"
                                v-bind:choice = "choice"
                                v-bind:serialNum = "index"
 
@@ -71,14 +72,18 @@
           <div class="block">
             <span class="demonstration">问卷截止日期：</span>
             <el-date-picker
-              v-model="value1"
+              v-model="endTime"
+              format="yyyy-MM-dd"
               type="date"
               placeholder="选择日期"
               :picker-options="pickerOptions0">
             </el-date-picker>
+
+            <span class="mustWriteHide" style="color: red; font-size: 36px;">*</span>
+
             <div class="qn-operation">
-              <span class="save-qn"    @click="saveQn">保存问卷</span>
-              <span class="publish-qn" @click="publishQn">发布问卷</span>
+              <el-button :plain="true" @click="saveQn"          class="save-qn">保存问卷</el-button>
+              <el-button type="text"   @click="publishConfirm"  class="publish-qn">发布问卷</el-button>
             </div>
           </div>
         </div>
@@ -92,40 +97,84 @@
   import singleChoice from './choice/singleChoice.vue'
   import multipleChoice from './choice/multipleChoice.vue'
   import textareaCopment from './choice/textareaCopment.vue'
-  import {loadFromLocal} from '../common/js/store.js'
+  import {loadFromLocal,saveQuestion,loadNewQn,isNewPage} from '../common/js/store.js'
   export default {
     name: 'edit',
     data () {
       return {
-        qnMessage: {
-
-        },
+        qnMessage: null,
         topics: {
 
         },
-        singleChoiceList: 1,
-        multipleChoiceCount: 0,
-        textareaCount:  0,
-        totalCount: 0,
-        singleChoiceID: 0,
-        multipleChoiceID: 1,
-        textareaID: 2,
         pickerOptions0: {
           disabledDate (time) {
             return time.getTime() < Date.now() - 8.64e7;
           }
         },
-        value1: ''
+        endTime: ''
       }
     },
     created: function () {
+
+
+      if (isNewPage()){
+        this.qnMessage = loadNewQn();
+      }else{
         this.qnMessage = loadFromLocal()
+      }
+      if (this.qnMessage === undefined){
+        this.qnMessage = loadNewQn();
+      }
+
       this.topics = this.qnMessage.topics
+      this.endTime = new Date()
     },
+    watch: {
+      // a computed getter
+      endTime: function () {
+        // `this` points to the vm instance
+        //在未加载日期控件时候 endTime 值为 string,会报错，因此需要判断
+        if (this.endTime instanceof Date){
+          let year = this.endTime.getFullYear();
+          let month = this.endTime.getMonth();
+          let day = this.endTime.getDate();
+          if (day < 10){
+              day = "0" + day
+          }
+          if (month < 10){
+            month = "0" + month
+          }
+          this.endTime = year +"-" + month + "-" + day
+        }
+      }
+    },
+
     methods: {
+      titleChange: function(){
+        this.qnMessage.title = event.target.innerText;
+      },
+
+      publishConfirm: function() {
+        this.$confirm('再次确认发布问卷？该问卷截止日期为（' + this.endTime + '）', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '发布成功!'
+          });
+          this.publishQn();
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消发布'
+          });
+        });
+      },
       up: function (index) {
-//        this.topics[index].title = "fuck";
-        //跟深拷贝和浅拷贝有关？
+
         let temp = this.topics[index]
         this.$set(this.topics, index, this.topics[index - 1])
         this.$set(this.topics, index - 1, temp)
@@ -171,23 +220,35 @@
         this.topics.push(newTextChoice);
       },
       saveQn: function () {
-
+        this.$message('保存成功');
+          //保存一下回到 qn 中
+        this.qnMessage.topics= this.topics
+        this.qnMessage.endTime = this.endTime;
+        saveQuestion(this.qnMessage)
       },
-      publishQn: function () {
 
+      publishQn: function () {
+        this.qnMessage.topics= this.topics
+        this.qnMessage.endTime = this.endTime;
+        this.qnMessage.status = 1
+        saveQuestion(this.qnMessage)
+        this.$router.push('check');
       },
       deleteChoice: function (index) {
-        //TODO
-
         this.topics.splice(index,1);
-        console.log( this.topics)
-
       },
+
       repeat: function (index,choice) {
+        //变量是引用，新创建的变量指针仍然指向原引用，因此不能用浅拷贝的方法。
+        let newChoice = JSON.parse( JSON.stringify(choice) )
+
+        //看 choice 是否 变化,不变化，问题出现在 vue 中 :key 中！
+        //给模拟数据加上id 是为了防止问题复用后，因为 vue 将同一个 id 的问题视为一个组件来渲染，导致同样 id 的问题同生共死。。。
+        newChoice.id= Math.floor(Math.random() * (1000000 - 1) + 1)
 
         //TODO
-        this.topics.splice(index,0,choice);
-        console.log(    this.topics)
+        ///生成一个数组判断随机数是否重复
+        this.topics.splice(index,0,newChoice);
       }
     },
 
@@ -229,9 +290,7 @@
         }
       }
     }
-    .qn-body{
 
-    }
     .add-qn{
       margin-top: 80px;
       border: 2px solid #CCC;
@@ -274,15 +333,27 @@
 
         .save-qn,.publish-qn{
           border: 1px solid #CCC ;
-          padding: 5px;
+          padding: 8px;
           font-size: 16px;
           text-align: center;
-          margin-left: 20px;
+          cursor: pointer;
+          color: black;
+
+          /*element-ui 字体不是浏览器默认的,需要手动设置*/
+          font-family: inherit;
+        }
+        .save-qn{
+         margin-right: 20px;
         }
 
         .publish-qn{
           background-color:  #EE7419;
-          margin-right: 60px;
+
+          a{
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+          }
         }
       }
 

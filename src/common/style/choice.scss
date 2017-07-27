@@ -1,0 +1,84 @@
+
+#container {
+  text-align: left;
+  margin: 10px;
+
+  .single-qn {
+    padding: 20px;
+    position: relative;
+
+    &:hover {
+      background-color: #fdf1e6;
+    }
+  }
+  .qn-name {
+    font-size: 18px;
+    font-weight: bold;
+
+    .mustWriteHide{
+      display: none;
+    }
+    .mustWriteShow{
+      display: inline;
+    }
+  }
+  .qn-required{
+    display: inline-block;
+    float: right;
+    margin-right: 40px;
+    font-size: 16px;
+  }
+
+  .qn-list-item {
+    margin: 20px;
+    width: 90%;
+    position: relative;
+    vertical-align: baseline;
+
+    .item-checkbox {
+      margin: 0 0 0 30px;
+      width: 16px;
+      height: 16px;
+
+    }
+
+    .item-content {
+      margin: 0 10px 0 10px;
+      font-size: 16px;
+
+    }
+
+    &:hover {
+      .list-item-delete, .list-item-new {
+        display: inline-block;
+      }
+    }
+
+    .list-item-new {
+      left: -10px;
+    }
+    .list-item-delete {
+      left: -35px;
+
+    }
+
+    .list-item-delete, .list-item-new {
+      position: absolute;
+      top: -3px;
+      color: green;
+      border: 3px solid green;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+  }
+
+  .choice-operation {
+    position: absolute;
+    right: 40px;
+    bottom: 20px;
+
+  }
+}
+

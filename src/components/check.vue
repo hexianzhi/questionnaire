@@ -25,37 +25,30 @@
         </th>
       </tr>
       <tbody class="list-body" >
-         <tr v-for="col in columns">
+         <tr v-for="(col,index) in qnPages">
            <td>
-             <input type="checkbox"  v-model="checked"/>
+             <input type="checkbox" v-bind:value="index"  v-model="checked"/>
            </td>
            <td>
              {{col.title}}
            </td>
            <td>
-             {{col.endTime}}
+            {{col.endTime}}
            </td>
            <td>
              {{classMap[col.status]}}
            </td>
            <td>
-             <button>
-               <router-link to="/edit">
-               编辑
-               </router-link>
+             <button @click="editPage(index)">
+                  编辑
              </button>
+             <el-button type="text" @click="deleteQn(index)" class="list-delete" >  删除</el-button>
+             <!--<button @click="deleteQn(index)" class="list-delete">-->
+                 <!--删除-->
+             <!--</button>-->
 
-
-             <button  class="list-delete">
-               <router-link to="/edit">
-                 删除
-               </router-link>
-             </button>
-
-             <button class="list-detail">
-               <router-link to="/detail">
+             <button  @click="qnDetail(index)" class="list-detail">
                  查看数据
-               </router-link>
              </button>
            </td>
 
@@ -64,13 +57,10 @@
       <tfoot class="list-foot">
         <tr>
           <td>
-            <label ><input type="checkbox" class="isCheckAll" v-model="checked"/>
-               全选
+            <label ><input type="checkbox"   class="isCheckAll" v-model="AllQnChoose"/>
+              全选
             </label>
-            <button class="delete-all">
-              删除
-            </button>
-
+            <el-button type="text" @click="deleteAll" class="delete-all">删除选中文件</el-button>
           </td>
         </tr>
       </tfoot>
@@ -81,29 +71,117 @@
 
 
 <script>
-  import {loadAllData} from '../common/js/store.js';
+  import {loadAllData,saveToLocal} from '../common/js/store.js';
 
   export default {
     name: 'check',
     data () {
       return {
         //初始化为全不选
-        checked: false
+        checked: [],
+        AllQnChoose: false,
+        qnPages: []
       }
     },
     created: function () {
       this.classMap = ['未发布', '发布中', '已结束']
-      this.columns = loadAllData();
+      this.qnPages = loadAllData();
+      if (this.qnPages.length === 0 ){
+        this.$router.push('newbuild')
+      }
+    },
+    watch: {
+      checked: function () {
+          if (this.checked.length === this.qnPages.length){
+            this.AllQnChoose = true
+          }else {
+            this.AllQnChoose = false
+          }
+      },
+      AllQnChoose: function() {
+        if (this.AllQnChoose){
+          //清空数组，不然就多添加index
+          this.checked = []
+          for (let index of this.qnPages.keys()) {
+            this.checked.push(index);
+          }
+        }
+      }
+
+    },
+    methods: {
+      editPage: function (index) {
+        saveToLocal(this.qnPages[index].id)
+        this.$router.push('edit')
+      },
+      qnDetail: function (index) {
+        saveToLocal(this.qnPages[index].id)
+        this.$router.push('detail')
+      },
+      deleteQn: function (index) {
+        this.$confirm('此操作将永久删除该问卷, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.qnPages.splice(index,1);
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+
+        //如果没有数据则跳转到新建问卷列表
+        if (this.qnPages.length === 0 ){
+          this.$router.push('newbuild')
+        }
+      },
+      deleteAll: function () {
+
+        if (this.AllQnChoose){
+            //TODO delete
+          this.$confirm('此操作将永久删除全部问卷, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+
+            //错误的方法：该变量指针指向新的引用，原引用并没有完成删除！！
+            //this.qnPages = []
+
+            //正确的方法：
+            this.qnPages.length = 0
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.$router.push('newbuild')
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        }
+
+      }
     }
 
   }
+
 </script>
 
 
 <style lang="scss" scoped>
   @import "../common/style/mixins/flex-center";
-  @import "../common/style/mixins/table-th";
-  @import "../common/style/mixins/table-td";
+  @import "../common/style/mixins/table-th.css";
+  @import "../common/style/mixins/table-td.css";
+
   .list-page{
 
     position: relative;
@@ -114,6 +192,7 @@
       position: relative;
       width: 100%;
       height: 50px;
+
       @include table-th(
         $font-size: 16px
       );
@@ -152,7 +231,15 @@
 
       @include table-td(
         $font-size: 16
-      );
+      )
+
+      .list-delete{
+        span{
+          color: black;
+        }
+      }
+
+
     }
     .list-foot{
       text-align: left;
@@ -172,8 +259,20 @@
             padding-left: 40px;
           }
           .delete-all{
-            margin-left: 40px;
+            width: auto;
+            border: 1px solid #777;
+            border-radius: 2px;
+            background-color: #fff;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            padding: 10px;
+            font-family: inherit;
+            margin-left: 20px;
+            color: black;
+
+
           }
+
         }
       }
 

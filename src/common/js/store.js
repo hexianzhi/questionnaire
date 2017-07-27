@@ -1,8 +1,10 @@
 
+//编辑时保存所点击的文件
 export function saveToLocal(id) {
   window.localStorage.__page_id = id;
 };
 
+//加载指定问卷
 export function loadFromLocal() {
   let index = data.findIndex((element) =>{
     console.log(typeof element.id)
@@ -24,6 +26,8 @@ export function isNewPage() {
   return temp;
 }
 
+
+//新建问卷
 export function loadNewQn() {
   data.push(newPage)
   return newPage;
@@ -31,6 +35,7 @@ export function loadNewQn() {
 
 
 
+//保存问卷
 export function saveQuestion(qn) {
   //id 其实并没有作用
   let index = data.findIndex((element) =>{
@@ -39,6 +44,7 @@ export function saveQuestion(qn) {
   });
   data[index] = qn;
 }
+
 
 var randomId = function () {
   return Math.floor(Math.random() * ( 1000 - 1) + 1)
@@ -88,21 +94,35 @@ var data = [
     topics: [
       {
         "id": 1,
-        "title": "但选题1",
-        "options": ["选项一", "选项二", "选项三"],
+        "title": "单选题1",
+        "options": ["选项一","选项二"],
+        "necessary": true,
+        "type": "radio"
+      },
+      {
+        "id": 2,
+        "title": "单选题2",
+        "options": ["选项一", "选项二"],
+        "necessary": true,
+        "type": "radio"
+      },
+      {
+        "id": 45,
+        "title": "单选题3",
+        "options": ["选项一", "选项二","选项一"],
         "necessary": true,
         "type": "radio"
       },
       {
         "id": 3,
         "title": "多选题1",
-        "options": ["选项一", "选项二", "选项三"],
+        "options": ["选项一","选项二","选项二"],
         "necessary": true,
         "type": "checkbox"
       }, {
         "id": 4,
         "title": "多选题2",
-        "options": ["选项一", "选项二", "选项三"],
+        "options": ["选项一", "选项二","选项二"],
         "necessary": true,
         "type": "checkbox"
       }, {
@@ -127,6 +147,46 @@ var data = [
     "status": "0",
     topics: [
       {
+        "id": 1,
+        "title": "单选题1",
+        "options": ["选项一","选项二"],
+        "necessary": true,
+        "type": "radio"
+      },
+      {
+        "id": 2,
+        "title": "单选题2",
+        "options": ["选项一", "选项二"],
+        "necessary": true,
+        "type": "radio"
+      },
+      {
+        "id": 45,
+        "title": "单选题3",
+        "options": ["选项一", "选项二","选项一"],
+        "necessary": true,
+        "type": "radio"
+      },
+      {
+        "id": 3,
+        "title": "多选题1",
+        "options": ["选项一","选项二","选项二"],
+        "necessary": true,
+        "type": "checkbox"
+      }, {
+        "id": 4,
+        "title": "多选题2",
+        "options": ["选项一", "选项二","选项二"],
+        "necessary": true,
+        "type": "checkbox"
+      }, {
+        "id": 5,
+        "title": "多选题3",
+        "options": ["选项一", "选项二", "选项三"],
+        "necessary": true,
+        "type": "checkbox"
+      },
+      {
         "id": 6,
         "title": "文本框1",
         "necessary": true,
@@ -141,16 +201,44 @@ var data = [
     "status": "0",
     topics: [
       {
-        "id": 6,
-        "title": "文本框1",
+        "id": 1,
+        "title": "单选题1",
+        "options": ["选项一","选项二"],
         "necessary": true,
-        "type": "textarea"
+        "type": "radio"
       },
       {
-        "id": 6,
-        "title": "文本框1",
+        "id": 2,
+        "title": "单选题2",
+        "options": ["选项一", "选项二"],
         "necessary": true,
-        "type": "textarea"
+        "type": "radio"
+      },
+      {
+        "id": 45,
+        "title": "单选题3",
+        "options": ["选项一", "选项二","选项一"],
+        "necessary": true,
+        "type": "radio"
+      },
+      {
+        "id": 3,
+        "title": "多选题1",
+        "options": ["选项一","选项二","选项二"],
+        "necessary": true,
+        "type": "checkbox"
+      }, {
+        "id": 4,
+        "title": "多选题2",
+        "options": ["选项一", "选项二","选项二"],
+        "necessary": true,
+        "type": "checkbox"
+      }, {
+        "id": 5,
+        "title": "多选题3",
+        "options": ["选项一", "选项二", "选项三"],
+        "necessary": true,
+        "type": "checkbox"
       },
       {
         "id": 6,

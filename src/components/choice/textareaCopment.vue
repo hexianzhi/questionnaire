@@ -2,22 +2,23 @@
   <div>
     <div id="container">
       <p class="qn-name">
-          {{this.serialNumber}}. 文本题
-        <span class="mustWriteHide" :class="{ mustWriteShow: isMustWrite}" style="color: red">
+        {{serialNum+1}}. {{choice.title}}
+        <span class="mustWriteHide" :class="{ mustWriteShow: choice.necessary}" style="color: red">
              *
           </span>
       </p>
       <div class="qn-required">
-        <input type="checkbox" id="checkbox" v-model="isMustWrite"/>
-        <label for="checkbox"> 是否是必填项   </label>
+        <input type="checkbox" id="checkbox" v-model="choice.necessary"/>
+        <label for="checkbox"> 必答题   </label>
       </div>
 
       <textarea class="item-text"  ></textarea>
 
-      <choice-operation class="choice-operation"  v-on:deleteChoice="deleteChoice" v-on:repeat="repeat"
-                        v-bind:islast="islastChoice"  v-bind:isfirst="isfirstChoice">
+      <choice-operation class="choice-operation"  v-on:deleteChoice="deleteChoice"
+                        v-on:repeat="repeat"
+                        v-on:up="up" v-on:down="down"
+                        v-bind:canUp="canUp"  v-bind:canDown="canDown">
       </choice-operation>
-
     </div>
   </div>
 
@@ -35,19 +36,37 @@
         }
       },
       props: {
-        serialNumber: {
+        choice: {
+          type: Object,
+          default: {}
+        },
+        serialNum: {
           type: Number,
-          default: 1
+          default: 0
         },
-        islastChoice: {
+        canUp: {
           type: Boolean,
-          default: true
         },
-        isfirstChoice: {
+        canDown: {
           type: Boolean,
-          default: false
         }
       },
+      methods: {
+        up: function () {
+          this.$emit("up")
+        },
+        down: function () {
+          this.$emit("down")
+        },
+        repeat: function () {
+          this.$emit("repeat")
+        },
+        //        删除单选题
+        deleteChoice: function () {
+          this.$emit("deleteChoice");
+        }
+      },
+
       components: {
         ChoiceOperation,
         'choice-operation': choiceOperation

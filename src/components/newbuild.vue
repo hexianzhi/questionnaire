@@ -1,10 +1,8 @@
 <template>
     <div>
       <div class="new-build">
-        <button class="new-questionnaire">
-          <router-link to="/edit">
+        <button class="new-questionnaire" @click="addNewQn">
             + 新建问卷
-          </router-link>
         </button>
       </div>
 
@@ -15,9 +13,17 @@
 
 
 <script>
+    import {SetNewPage} from '../common/js/store.js'
     export default {
         data () {
-            return {}
+            return {
+            }
+        },
+        methods: {
+          addNewQn: function () {
+            SetNewPage()
+            this.$router.push("edit")
+          }
         }
     }
 </script>
@@ -34,6 +40,7 @@
     box-shadow: 0 0 5px #ccc;
     width: 1040px;
 
+
     /*这是个坑，记得放在margin 后面*/
     margin: 0 auto;
     margin-top: 50px;
@@ -48,6 +55,7 @@
       border: 1px solid #EE7419;
       border-radius: 3px;
       transform: translate(-50%,-50%);
+      color: #fff;
       a {
         color: #fff;
       }
