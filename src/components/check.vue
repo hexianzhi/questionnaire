@@ -1,288 +1,212 @@
 <template>
-  <div>
-    <table class="list-page" >
-      <tr class="list-des">
-        <th>
-        </th>
-        <th>
-         标题
-         </th>
-        <th>
-         时间
-         </th>
-        <th>
-          状态
-        </th>
-        <th>
-        操作
-         </th>
-        <th>
-          <button class="new-questionnaire">
-            <router-link to="/newbuild">
-              + 新建问卷
-            </router-link>
-          </button>
-        </th>
-      </tr>
-      <tbody class="list-body" >
-         <tr v-for="(col,index) in qnPages">
-           <td>
-             <input type="checkbox" v-bind:value="index"  v-model="checked"/>
-           </td>
-           <td>
-             {{col.title}}
-           </td>
-           <td>
-            {{col.endTime}}
-           </td>
-           <td>
-             {{classMap[col.status]}}
-           </td>
-           <td>
-             <button @click="editPage(index)">
-                  编辑
-             </button>
-             <el-button type="text" @click="deleteQn(index)" class="list-delete" >  删除</el-button>
-             <!--<button @click="deleteQn(index)" class="list-delete">-->
-                 <!--删除-->
-             <!--</button>-->
 
-             <button  @click="qnDetail(index)" class="list-detail">
-                 查看数据
-             </button>
-           </td>
+  <div id="container">
+    <div class="qn-head">
+      <p contentEditable="true"  v-on:keyup="titleChange" >
+        {{qnMessage.title}}
+      </p>
+    </div>
 
-         </tr>
-      </tbody>
-      <tfoot class="list-foot">
-        <tr>
-          <td>
-            <label ><input type="checkbox"   class="isCheckAll" v-model="AllQnChoose"/>
-              全选
-            </label>
-            <el-button type="text" @click="deleteAll" class="delete-all">删除选中文件</el-button>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+    <div class="qn-body">
+      <ul class="qn-list">
+        <!--以后这里的组件是由函数拼凑出来的-->
+        <!--还要传是不是最后一个-->
+        <li v-for="(choice, index ) in topics">
+          <single-choice   v-if="(choice.type === 'radio')"
+                           :key="choice.id"
+                           v-bind:choice = "choice"
+                           v-bind:serialNum = "index">
+          </single-choice>
+          <multiple-choice v-if="(choice.type === 'checkbox')" :key="choice.id"
+                           v-bind:choice = "choice"
+                           v-bind:serialNum = "index">
+          </multiple-choice>
+
+          <textareaCopment v-if="(choice.type === 'textarea')"  :key="choice.id"
+                           v-bind:choice = "choice"
+                           v-bind:serialNum = "index">
+          </textareaCopment>
+
+        </li>
+
+      </ul>
+
+    </div>
+
+    <div class="qn-foot">
+
+
+
+        <div class="qn-operation">
+          <el-button type="text"   @click="submitQn"  class="publish-qn" style="color: white">提交</el-button>
+        </div>
+
+    </div>
   </div>
+
 
 </template>
 
 
 <script>
-  import {loadAllData,saveToLocal} from '../common/js/store.js';
-
+  import singleChoice from './checkComp/sgChoice.vue'
+  import multipleChoice from './checkComp/multipleChoice.vue'
+  import textareaCopment from './checkComp/textCopment.vue'
+  import {loadFromLocal,loadNewQn,isNewPage} from '../common/js/store.js'
   export default {
-    name: 'check',
+    name: 'edit',
     data () {
       return {
-        //初始化为全不选
-        checked: [],
-        AllQnChoose: false,
-        qnPages: []
+        qnMessage: null,
+        topics: {
+
+        }
       }
     },
     created: function () {
-      this.classMap = ['未发布', '发布中', '已结束']
-      this.qnPages = loadAllData();
-      if (this.qnPages.length === 0 ){
-        this.$router.push('newbuild')
+
+
+      if (isNewPage()){
+        this.qnMessage = loadNewQn();
+      }else{
+        this.qnMessage = loadFromLocal()
       }
-    },
-    watch: {
-      checked: function () {
-          if (this.checked.length === this.qnPages.length){
-            this.AllQnChoose = true
-          }else {
-            this.AllQnChoose = false
-          }
-      },
-      AllQnChoose: function() {
-        if (this.AllQnChoose){
-          //清空数组，不然就多添加index
-          this.checked = []
-          for (let index of this.qnPages.keys()) {
-            this.checked.push(index);
-          }
-        }
+      if (this.qnMessage === undefined){
+        this.qnMessage = loadNewQn();
       }
 
+      this.topics = this.qnMessage.topics
+
     },
+
     methods: {
-      editPage: function (index) {
-        saveToLocal(this.qnPages[index].id)
-        this.$router.push('edit')
-      },
-      qnDetail: function (index) {
-        saveToLocal(this.qnPages[index].id)
-        this.$router.push('detail')
-      },
-      deleteQn: function (index) {
-        this.$confirm('此操作将永久删除该问卷, 是否继续?', '提示', {
+      submitQn: function () {
+        this.$confirm('确定提交答卷?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: '提交成功!'
           });
-          this.qnPages.splice(index,1);
+          this.$router.push('main')
         }).catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除'
+            message: '已取消提交'
           });
         });
-
-        //如果没有数据则跳转到新建问卷列表
-        if (this.qnPages.length === 0 ){
-          this.$router.push('newbuild')
-        }
-      },
-      deleteAll: function () {
-
-        if (this.AllQnChoose){
-            //TODO delete
-          this.$confirm('此操作将永久删除全部问卷, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-
-            //错误的方法：该变量指针指向新的引用，原引用并没有完成删除！！
-            //this.qnPages = []
-
-            //正确的方法：
-            this.qnPages.length = 0
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            });
-            this.$router.push('newbuild')
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消删除'
-            });
-          });
-        }
-
       }
+    },
+
+    components: {
+      'multiple-choice': multipleChoice,
+      'single-choice': singleChoice,
+      'textareaCopment': textareaCopment
+
     }
-
   }
-
 </script>
 
 
+
 <style lang="scss" scoped>
-  @import "../common/style/mixins/flex-center";
-  @import "../common/style/mixins/table-th.css";
-  @import "../common/style/mixins/table-td.css";
 
-  .list-page{
-
+  #container{
     position: relative;
+    box-shadow: 0 0 3px grey;
+    background-color: #fff;
+    box-shadow: 0 0 5px #ccc;
+    width: 1040px;
     margin: 0 auto;
     margin-top: 80px;
+    padding: 20px;
 
-    .list-des{
+    .qn-head {
       position: relative;
-      width: 100%;
-      height: 50px;
+      border-bottom: 2px solid #CCC;
+      width: 1000px;
+      text-align: center;
+      padding-bottom: 10px;
 
-      @include table-th(
-        $font-size: 16px
-      );
-
-      .new-questionnaire{
-        position: absolute;
-        left: 904px;
-        width: 95px;
-        height: 25px;
-        background-color: #EE7419;
-        color: #fff;
-        border: 1px solid #EE7419;
-        border-radius: 3px;
-        a{
-          color: #fff;
-        }
-      }
-    }
-    .list-body{
-      background-color: white;
-      text-align: left;
-      width: 100%;
-
-      tr{
-        display: block;
-        padding: 20px;
-        transition: background-color .3s cubic-bezier(0,0,0,1);
-        border-bottom: 1px solid #EFEFEF;
+      p{
+        font-size: 20px;
+        padding: 10px;
         &:hover{
-          background-color: #EE7419;
-        }
-        &:nth-child(1){
-          padding-top: 40px;
+          background-color: #fef1e8;
         }
       }
+    }
 
-      @include table-td(
-        $font-size: 16
-      )
-
-      .list-delete{
+    .add-qn{
+      margin-top: 80px;
+      border: 2px solid #CCC;
+      padding: 10px;
+      .choice{
+        margin: 20px;
+        padding: 10px 20px 10px 20px;
+        display: inline-block;
+        text-align: center;
+        width: 100px;
+        height: 20px;
+        background-color: #eeeeee;
+        border: 1px solid #CCC ;
+        cursor: pointer;
         span{
-          color: black;
+          padding-left: 5px;
+          font-size: 16px;
         }
       }
-
+      .add-qn-hint{
+        padding: 20px;
+        font-size: 18px;
+        background-color: #eeeeee;
+      }
 
     }
-    .list-foot{
+
+    .qn-foot{
+      border-top: 1px solid #CCC  ;
+      margin-top: 20px;
+      padding: 60px;
       text-align: left;
-      background-color: white;
-      width: 100%;
 
-      @include my-button($btn-font-size: 16);
 
-      tr{
-        height: 80px;
+      .demonstration{
         font-size: 16px;
+      }
+      .qn-operation{
+        float: right;
 
-        td{
-          padding-left: 40px;
+        .save-qn,.publish-qn{
+          border: 1px solid #CCC ;
+          padding: 8px;
+          font-size: 16px;
+          text-align: center;
+          cursor: pointer;
+          color: black;
 
-          .isCheckAll{
-            padding-left: 40px;
+          /*element-ui 字体不是浏览器默认的,需要手动设置*/
+          font-family: inherit;
+        }
+        .save-qn{
+          margin-right: 20px;
+        }
+
+        .publish-qn{
+          background-color:  #EE7419;
+
+          a{
+            display: inline-block;
+            width: 100%;
+            height: 100%;
           }
-          .delete-all{
-            width: auto;
-            border: 1px solid #777;
-            border-radius: 2px;
-            background-color: #fff;
-            padding-top: 3px;
-            padding-bottom: 3px;
-            padding: 10px;
-            font-family: inherit;
-            margin-left: 20px;
-            color: black;
-
-
-          }
-
         }
       }
 
-
-
-
     }
+
   }
 
-  h1{
-    background-color: red;
-  }
 </style>

@@ -1,0 +1,52 @@
+#container {
+  text-align: left;
+  margin: 10px; }
+  #container .single-qn {
+    padding: 20px;
+    position: relative; }
+    #container .single-qn:hover {
+      background-color: #fdf1e6; }
+  #container .qn-name {
+    font-size: 18px;
+    font-weight: bold; }
+    #container .qn-name .mustWriteHide {
+      display: none; }
+    #container .qn-name .mustWriteShow {
+      display: inline; }
+  #container .qn-required {
+    display: inline-block;
+    float: right;
+    margin-right: 40px;
+    font-size: 16px; }
+  #container .qn-list-item {
+    margin: 20px;
+    width: 90%;
+    position: relative;
+    vertical-align: baseline; }
+    #container .qn-list-item .item-checkbox {
+      margin: 0 0 0 30px;
+      width: 16px;
+      height: 16px; }
+    #container .qn-list-item .item-content {
+      margin: 0 10px 0 10px;
+      font-size: 16px; }
+    #container .qn-list-item:hover .list-item-delete, #container .qn-list-item:hover .list-item-new {
+      display: inline-block; }
+    #container .qn-list-item .list-item-new {
+      left: -10px; }
+    #container .qn-list-item .list-item-delete {
+      left: -35px; }
+    #container .qn-list-item .list-item-delete, #container .qn-list-item .list-item-new {
+      position: absolute;
+      top: -3px;
+      color: green;
+      border: 3px solid green;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer; }
+  #container .choice-operation {
+    position: absolute;
+    right: 40px;
+    bottom: 20px; }
+
+/*# sourceMappingURL=choice.css.map */

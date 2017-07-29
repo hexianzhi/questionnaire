@@ -74,7 +74,7 @@
     },
     methods: {
       returnToMain: function () {
-          this.$router.push('check')
+          this.$router.push('main')
       }
 
     },
