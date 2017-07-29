@@ -57,10 +57,32 @@ header{
   overflow: hidden;
   text-align: center;
 
+  @media (max-width: 992px) {
+    text-align: left;
+
+    img{
+      margin-left: 2px;
+    }
+    h3{
+      margin-left: 20px;
+      margin-top: 5px;
+    }
+
+    h5{
+      margin-left: 10px;
+      margin-top: 10px;
+
+    }
+
+  }
+
   img{
     cursor: pointer;
     float: left;
     margin-left: 100px;
+    @media (max-width: 992px) {
+        margin-left: 20px;
+    }
   }
   h3{
     color: white;

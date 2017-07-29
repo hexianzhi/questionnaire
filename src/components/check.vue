@@ -123,6 +123,12 @@
     margin-top: 80px;
     padding: 20px;
 
+    @media (max-width: 992px) {
+      width: auto;
+      margin: 15px;
+
+    }
+
     .qn-head {
       position: relative;
       border-bottom: 2px solid #CCC;

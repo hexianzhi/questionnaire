@@ -78,7 +78,12 @@
       width: 600px;
       margin: 20px 0 0 50px;
 
+      @media (max-width: 992px) {
+        width: 80%;
+      }
     }
+
+
     .choice-operation {
       position: absolute;
       right: 40px;
