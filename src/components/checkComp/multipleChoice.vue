@@ -11,7 +11,7 @@
         </span>
           <ul class="qn-list">
             <li class="qn-list-item"         v-for="(name, index)  in choiceOptions" v-bind:key="index">
-              <input class="item-checkbox"   name="radio-check" type="radio"/>
+              <input class="item-checkbox"   name="radio-check" type="checkbox"/>
               <label class="item-content">
                 {{name}}
               </label>

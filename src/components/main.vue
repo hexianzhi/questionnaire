@@ -27,7 +27,7 @@
       <tbody class="list-body" >
          <tr v-for="(col,index) in qnPages">
            <td>
-             <input type="checkbox" v-bind:value="index"  v-model="checked"/>
+             <input type="checkbox" v-bind:value="index"  v-model="deleteChecked"/>
            </td>
            <td>
              {{col.title}}
@@ -35,7 +35,7 @@
            <td>
             {{col.endTime}}
            </td>
-           <td>
+           <td >
              {{classMap[col.status]}}
            </td>
            <td>
@@ -44,16 +44,14 @@
              </button>
 
 
-             <button  @click="qnDetail(index)" class="list-detail">
+             <button @click="qnDetail(index)" class="list-detail"  >
                查看数据
              </button>
-             <button @click="editPage(index)">
+             <button @click="editPage(index)" v-show="col.status == 0">
                   编辑
              </button>
-             <el-button type="text" @click="deleteQn(index)" class="list-delete" >  删除</el-button>
-             <!--<button @click="deleteQn(index)" class="list-delete">-->
-                 <!--删除-->
-             <!--</button>-->
+             <el-button type="text" @click="deleteQn(index)" class="list-delete" v-show="col.status == 0">  删除</el-button>
+
 
            </td>
 
@@ -82,8 +80,8 @@
     name: 'check',
     data () {
       return {
-        //初始化为全不选
-        checked: [],
+        //单选框
+        deleteChecked: [],
         AllQnChoose: false,
         qnPages: []
       }
@@ -96,8 +94,8 @@
       }
     },
     watch: {
-      checked: function () {
-          if (this.checked.length === this.qnPages.length){
+      deleteChecked: function () {
+          if (this.deleteChecked.length === this.qnPages.length){
             this.AllQnChoose = true
           }else {
             this.AllQnChoose = false
@@ -106,13 +104,22 @@
       AllQnChoose: function() {
         if (this.AllQnChoose){
           //清空数组，不然就多添加index
-          this.checked = []
+          this.deleteChecked = []
           for (let index of this.qnPages.keys()) {
-            this.checked.push(index);
+            this.deleteChecked.push(index);
           }
         }
       }
+    },
+    computed: {
 
+      isPublish: function (status) {
+        if (status === 1){
+          return 'publish-statue';
+        }else {
+          return ;
+        }
+      }
     },
     methods: {
       checkPage: function (index) {
@@ -151,8 +158,7 @@
         }
       },
       deleteAll: function () {
-
-        if (this.AllQnChoose){
+        if (this.AllQnChoose || this.deleteChecked){
             //TODO delete
           this.$confirm('此操作将永久删除全部问卷, 是否继续?', '提示', {
             confirmButtonText: '确定',
@@ -235,6 +241,10 @@
         }
         &:nth-child(1){
           padding-top: 40px;
+        }
+
+        .publish-statue{
+          color: green;
         }
 
       }

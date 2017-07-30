@@ -232,7 +232,7 @@
         this.qnMessage.endTime = this.endTime;
         this.qnMessage.status = 1
         saveQuestion(this.qnMessage)
-        this.$router.push('check');
+        this.$router.push('main');
       },
       deleteChoice: function (index) {
         this.topics.splice(index,1);

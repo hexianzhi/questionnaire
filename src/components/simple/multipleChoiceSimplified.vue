@@ -9,7 +9,7 @@
 
           <ul class="qn-list">
             <li class="qn-list-item"         v-for="(name, index)  in choiceOptions" v-bind:key="index">
-              <input class="item-checkbox"   name="radio-check" type="radio"/>
+              <input class="item-checkbox"   name="radio-check" type="checkbox"/>
               <label class="item-content">
                 {{name}}
               </label>
@@ -40,26 +40,26 @@
       return {
         choiceOptions: [],
         chart: null,
-        chartId : '',
+        chartId: '',
         chartOptions: {
         },
         choiceChoose: []
       }
     },
     created: function () {
-      this.choiceOptions = this.choice.options;
-      this.chartId =  "data-chart-" + this.serialNum;
-      this.mockData();
+      this.choiceOptions = this.choice.options
+      this.chartId = 'data-chart-' + this.serialNum
+      this.mockData()
     },
     mounted: function () {
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         this.drawPie()
       })
     },
     methods: {
       drawPie: function () {
         let elemment = document.getElementById(this.chartId)
-        this.chart = echarts.init(elemment);
+        this.chart = echarts.init(elemment)
         this.chartOptions = {
           color: ['#3398DB', '#c23531', '#91c7ae', '#d48265' ,'#ca8622', '#bda29a','#6e7074', '#546570', '#c4ccd3'],
           tooltip: {
@@ -81,18 +81,18 @@
               }
             }
           ]
-        };
-        this.chart.setOption(this.chartOptions);
+        }
+        this.chart.setOption(this.chartOptions)
       },
       mockData: function () {
-        this.choiceChoosedCount = 0;
+        this.choiceChoosedCount = 0
         //模拟pie data 对象
 
         for (let index = 0; index < this.choiceOptions.length; index++) {
           let echartOb = {};
-          echartOb.value = Math.floor(Math.random() * (  100 - 0) + 0);
-          echartOb.name = this.choiceOptions[index];
-          this.choiceChoose.push(echartOb);
+          echartOb.value = Math.floor(Math.random() * (100 - 0) + 0)
+          echartOb.name = this.choiceOptions[index]
+          this.choiceChoose.push(echartOb)
         }
       }
     },
