@@ -290,8 +290,6 @@
             font-family: inherit;
             margin-left: 20px;
             color: black;
-
-
           }
 
         }
