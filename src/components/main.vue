@@ -27,7 +27,7 @@
       <tbody class="list-body" >
          <tr v-for="(col,index) in qnPages">
            <td>
-             <input type="checkbox" v-bind:value="index"  v-model="deleteChecked"/>
+             <input type="checkbox" v-bind:value="index"  v-model="col.checked"/>
            </td>
            <td>
              {{col.title}}
@@ -60,7 +60,7 @@
       <tfoot class="list-foot">
         <tr>
           <td>
-            <label ><input type="checkbox"   class="isCheckAll" v-model="AllQnChoose"/>
+            <label ><input type="checkbox"   class="isCheckAll" v-model="selectAll"/>
               全选
             </label>
             <el-button type="text" @click="deleteAll" class="delete-all">删除选中文件</el-button>
@@ -83,7 +83,8 @@
         //单选框
         deleteChecked: [],
         AllQnChoose: false,
-        qnPages: []
+        qnPages: [],
+        qsList: []
       }
     },
     created: function () {
@@ -113,11 +114,36 @@
     },
     computed: {
       //TODO 全选功能有bug。
+      selectAll: {
+        get () {//this.qsList是一个数组，理解代码时可以看为[{checked: false}, {checked: false}]
+          return this.selectCount === this.qsList.length && this.selectCount !== 0
+        },
+        set (value) {
+          this.qsList.forEach( item => {
+            item.checked = value
+          });
+          return value
+        }
+      },
+      selectCount () {
+        let i = 0;
+        this.qsList.forEach (item => {
+          if (item.checked) i++
+        })
+        return i
+      },
+      selectGroup () {
+        let group = []
+        this.qsList.forEach( item => {
+          if (item.checked) group.push(item)
+        } )
+        return group
+      },
       isPublish: function (status) {
         if (status === 1){
-          return 'publish-statue';
+          return 'publish-statue'
         }else {
-          return ;
+          return
         }
       }
     },
