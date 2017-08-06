@@ -112,7 +112,7 @@
       }
     },
     computed: {
-
+      //TODO 全选功能有bug。
       isPublish: function (status) {
         if (status === 1){
           return 'publish-statue';
