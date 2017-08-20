@@ -10,8 +10,8 @@
           </span>
         </span>
           <ul class="qn-list">
-            <li class="qn-list-item"         v-for="(name, index)  in choiceOptions" v-bind:key="index">
-              <input class="item-checkbox"   name="radio-check" type="checkbox"/>
+            <li class="qn-list-item"         v-for="(name,index)  in choiceOptions" v-bind:key="index">
+              <input class="item-checkbox" type="checkbox"   :value="name" v-model="choiceValue"  />
               <label class="item-content">
                 {{name}}
               </label>
@@ -32,12 +32,16 @@
       return {
         choiceOptions: [],
         chart: null,
-        chartId : ''
+        choiceValue : []
+      }
+    },
+    watch: {
+      choiceValue: function () {
+        this.$emit("isCheck",this.choice.title);
       }
     },
     created: function () {
       this.choiceOptions = this.choice.options;
-      this.chartId =  "data-chart-" + this.serialNum;
 
     },
     props: {

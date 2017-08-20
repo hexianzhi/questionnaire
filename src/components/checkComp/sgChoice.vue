@@ -11,11 +11,10 @@
              *</span>
         </span>
 
-
-
           <ul class="qn-list">
             <li class="qn-list-item"         v-for="(name, index)  in choiceOptions" v-bind:key="index">
-              <input class="item-checkbox"   name="radio-check" type="radio"/>
+              <!--:name 属性一定要用这种语法，不然不行-->
+              <input class="item-checkbox"      :name="`${choice.title}`" :value="name" v-model="choiceValue" type="radio" />
               <label class="item-content">
                 {{name}}
               </label>
@@ -39,13 +38,17 @@
       return {
         choiceOptions: [],
         chart: null,
-        chartId : ''
-
+        choiceValue : ''
+      }
+    },
+    watch: {
+      choiceValue: function () {
+        //如果是 点一次就 push ,那么每一次点都会增加。。。wtf
+        this.$emit("isCheck",this.choice.title);
       }
     },
     created: function () {
       this.choiceOptions = this.choice.options;
-      this.chartId =  "data-chart-" + this.serialNum;
     },
     props: {
       choice: {

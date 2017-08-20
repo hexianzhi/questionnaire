@@ -109,20 +109,20 @@ var data = [
       {
         "id": 45,
         "title": "单选题3",
-        "options": ["选项一", "选项二","选项一"],
+        "options": ["选项一", "选项二"," 选项三"],
         "necessary": true,
         "type": "radio"
       },
       {
         "id": 3,
         "title": "多选题1",
-        "options": ["选项一","选项二","选项二"],
+        "options": ["选项一","选项二","选项三"],
         "necessary": true,
         "type": "checkbox"
       }, {
         "id": 4,
         "title": "多选题2",
-        "options": ["选项一", "选项二","选项二"],
+        "options": ["选项一", "选项二","选项三"],
         "necessary": true,
         "type": "checkbox"
       }, {
@@ -163,20 +163,20 @@ var data = [
       {
         "id": 45,
         "title": "单选题3",
-        "options": ["选项一", "选项二","选项一"],
+        "options": ["选项一", "选项二","选项三"],
         "necessary": true,
         "type": "radio"
       },
       {
         "id": 3,
         "title": "多选题1",
-        "options": ["选项一","选项二","选项二"],
+        "options": ["选项一","选项二","选项三"],
         "necessary": true,
         "type": "checkbox"
       }, {
         "id": 4,
         "title": "多选题2",
-        "options": ["选项一", "选项二","选项二"],
+        "options": ["选项一", "选项二","选项三"],
         "necessary": true,
         "type": "checkbox"
       }, {
@@ -217,20 +217,20 @@ var data = [
       {
         "id": 45,
         "title": "单选题3",
-        "options": ["选项一", "选项二","选项一"],
+        "options": ["选项一", "选项二","选项三"],
         "necessary": true,
         "type": "radio"
       },
       {
         "id": 3,
         "title": "多选题1",
-        "options": ["选项一","选项二","选项二"],
+        "options": ["选项一","选项二","选项三"],
         "necessary": true,
         "type": "checkbox"
       }, {
         "id": 4,
         "title": "多选题2",
-        "options": ["选项一", "选项二","选项二"],
+        "options": ["选项一", "选项二","选项三"],
         "necessary": true,
         "type": "checkbox"
       }, {

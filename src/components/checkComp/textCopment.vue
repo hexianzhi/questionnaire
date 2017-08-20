@@ -12,7 +12,7 @@
           </span>
         </div>
 
-        <textarea class="item-text"  ></textarea>
+        <textarea class="item-text"  v-model="choiceValue"></textarea>
       </div>
     </div>
   </div>
@@ -27,12 +27,16 @@
       return {
         choiceOptions: [],
         chart: null,
-        chartId: ''
+        choiceValue: ''
+      }
+    },
+    watch: {
+      choiceValue: function () {
+        this.$emit("isCheck",this.choice.title);
       }
     },
     created: function () {
       this.choiceOptions = ['有效回答','无效回答']
-      this.chartId = "data-chart-" + this.serialNum;
 
     },
     props: {

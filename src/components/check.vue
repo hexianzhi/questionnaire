@@ -14,15 +14,22 @@
         <li v-for="(choice, index ) in topics">
           <single-choice   v-if="(choice.type === 'radio')"
                            :key="choice.id"
+                           v-on:isCheck="judgeSubmint"
                            v-bind:choice = "choice"
                            v-bind:serialNum = "index">
           </single-choice>
-          <multiple-choice v-if="(choice.type === 'checkbox')" :key="choice.id"
+          <multiple-choice v-if="(choice.type === 'checkbox')"
+                           :key="choice.id"
+                           v-on:isCheck="judgeSubmint"
+
                            v-bind:choice = "choice"
                            v-bind:serialNum = "index">
           </multiple-choice>
 
-          <textareaCopment v-if="(choice.type === 'textarea')"  :key="choice.id"
+          <textareaCopment v-if="(choice.type === 'textarea')"
+                           :key="choice.id"
+                           v-on:isCheck="judgeSubmint"
+
                            v-bind:choice = "choice"
                            v-bind:serialNum = "index">
           </textareaCopment>
@@ -53,6 +60,8 @@
   import multipleChoice from './checkComp/multipleChoice.vue'
   import textareaCopment from './checkComp/textCopment.vue'
   import {loadFromLocal,loadNewQn,isNewPage} from '../common/js/store.js'
+  import { Message } from 'element-ui';
+
   export default {
     name: 'edit',
     data () {
@@ -60,12 +69,13 @@
         qnMessage: null,
         topics: {
 
-        }
+        },
+        checkedList: [],
+        canSubmit: false
+
       }
     },
     created: function () {
-
-
       if (isNewPage()){
         this.qnMessage = loadNewQn();
       }else{
@@ -86,17 +96,36 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '提交成功!'
-          });
-          this.$router.push('main')
+          if (this.canSubmit){
+            this.$message({
+              type: 'success',
+              message: '提交成功!'
+            });
+            this.$router.push('main')
+          }else {
+            Message.success({message:"有必选项未选"})
+          }
+
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消提交'
           });
         });
+      },
+      //检查是否有必填项未填，没有则可提交
+      judgeSubmint: function (choiceValue) {
+
+        if(this.checkedList.indexOf(choiceValue) == -1 ){
+          this.checkedList.push(choiceValue);
+        }
+        console.log(this.checkedList.length)
+        console.log(this.topics.length)
+        var canSubmitBl = (this.checkedList.length === this.topics.length) ? true : false;
+
+        //TODO
+        //让子组件根据 value 值是否为空，自己控制显示。
+        this.canSubmit = canSubmitBl;
       }
     },
 
